@@ -4,8 +4,9 @@
   <title>Push Notify</title>
 </head>
 <body>
-<button onclick="notifyMe()">Notify me!</button>
-<script src="service.js"></script>
+  <input type="text" id="message" placeholder="enter message">
+<button id="btnNotify" onclick="notifyMe()">Notify me!</button>
+<!--<script src="service.js"></script>-->
 <script src="js/socket.io.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="server.js"></script>
