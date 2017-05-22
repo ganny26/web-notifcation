@@ -1,38 +1,39 @@
 $(document).ready(function () {
-    var socket = io();
-    $('#btnNotify').click(function (event) {
-        var message = $('#message').val();
-        socket.emit('send message', { message: message });
-        socket.on('notify', function (msg) {
-            notifyMe(msg.message);
-        })
+
+    $('#btnNotify').click(function () {
+        var socket = io.connect('http://localhost:3000');
+        socket.emit('send', 'hello from client');
     })
+
+    $('#btnGet').click(function () {
+        var socket = io.connect('http://localhost:3000');
+        socket.on('receive', function (data) {
+            $('#message').text(data);
+            var body = data;
+            var icon = 'images/icon-192x192.png';
+            var options = {
+                body: body,
+                icon: icon
+            }
+            notifyMe(options);
+        })
+
+    })
+
 })
-
-var title = 'Article Reader';
-//var body = 'Hello world';
-var icon = 'images/icon-192x192.png';
-
 
 
 function sendNotification(title, options) {
     var notification = new Notification(title, options);
 }
 
-function notifyMe(message) {
+function notifyMe(options) {
+      var title = 'Article Reader';
     if (!("Notification" in window)) {
         alert("This browser does not support desktop notification");
     } else if (Notification.permission === "granted") {
-        var options = {
-            body: message,
-            icon: icon
-        }
         sendNotification(title, options);
     } else if (Notification.permission !== "denied") {
-        var options = {
-            body: message,
-            icon: icon
-        }
         Notification.requestPermission(function (permission) {
             if (permission === "granted") {
                 sendNotification(title, options);
