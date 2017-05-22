@@ -4,6 +4,10 @@ var path = require("path");
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var router = express.Router();
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 app.use('/', router);
 
@@ -13,12 +17,23 @@ http.listen(3000, function () {
 
 io.on('connection', function (socket) {
     console.log('We have user connected !');
-    // This event will be emitted from Client when some one add comments.
-    socket.on('send message', function (error, result) {
-        if (error) { io.emit('error') }
-        else {
-            socket.broadcast.emit('notify everyone', { msg: data.message })
-        }
-
+    socket.on('send', function (data) {
+        console.log(data);
     });
+
+    socket.emit('receive', 'hello from server');
+    
 });
+
+/**API to post data */
+app.post("/send", function (req, res) {
+    var message = req.query.message;
+    var data = {
+        "message": message
+    }
+    io.on('connection', function (socket) {
+        console.log('We have user connected !');
+        socket.emit('getMessage', data);
+        res.send(data);
+    });
+})
