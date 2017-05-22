@@ -1,0 +1,23 @@
+{
+  "name": "push-server",
+  "version": "1.0.0",
+  "description": "notification server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ganny26/web-notifcation.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ganny26/web-notifcation/issues"
+  },
+  "homepage": "https://github.com/ganny26/web-notifcation#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "socket.io": "^2.0.1"
+  }
+}
