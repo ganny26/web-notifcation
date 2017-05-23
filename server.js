@@ -1,12 +1,12 @@
 $(document).ready(function () {
-
+  var socket = io.connect('http://localhost:3000');
     $('#btnNotify').click(function () {
-        var socket = io.connect('http://localhost:3000');
+      
         socket.emit('send', 'hello from client');
     })
 
     $('#btnGet').click(function () {
-        var socket = io.connect('http://localhost:3000');
+       
         socket.on('receive', function (data) {
             $('#message').text(data);
             var body = data;
@@ -19,6 +19,12 @@ $(document).ready(function () {
         })
 
     })
+
+    $('#lstSearch').keypress(function(e){
+        socket.emit('search',e.target.value);
+    })
+
+    socket.on('found', (data) => console.log('found: ' + data))
 
 })
 
