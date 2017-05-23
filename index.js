@@ -17,12 +17,18 @@ http.listen(3000, function () {
 
 io.on('connection', function (socket) {
     console.log('We have user connected !');
+
     socket.on('send', function (data) {
         console.log(data);
     });
 
     socket.emit('receive', 'hello from server');
-    
+
+    socket.on('search',function(text){
+        const data = Math.random();
+        io.emit('found',text);
+    })
+
 });
 
 /**API to post data */
