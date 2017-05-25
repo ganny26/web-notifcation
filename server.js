@@ -1,50 +1,79 @@
-$(document).ready(function () {
-  var socket = io.connect('http://localhost:3000');
-    $('#btnNotify').click(function () {
-      
-        socket.emit('send', 'hello from client');
+var express = require('express');
+var app = express();
+var path = require("path");
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var router = express.Router();
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var userDataSchema = require('./models/userSchema');
+
+
+var userData = mongoose.model('userData',userDataSchema);
+
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+
+http.listen(3000, function () {
+    console.log("Listening on 3000");
+});
+
+io.on('connection', function (socket) {
+    console.log('We have user connected !');
+
+    socket.on('send', function (data) {
+        console.log(data);
+    });
+
+    socket.emit('receive', 'hello from server');
+
+    socket.on('search',function(text){
+        const data = Math.random();
+        io.emit('found',data + '--' + text);
     })
 
-    $('#btnGet').click(function () {
-       
-        socket.on('receive', function (data) {
-            $('#message').text(data);
-            var body = data;
-            var icon = 'images/icon-192x192.png';
-            var options = {
-                body: body,
-                icon: icon
-            }
-            notifyMe(options);
-        })
+});
 
-    })
-
-    $('#lstSearch').keypress(function(e){
-        socket.emit('search',e.target.value);
-    })
-
-    socket.on('found', (data) => console.log('found: ' + data))
-
+/**API to post data */
+app.post("/send", function (req, res) {
+    var message = req.query.message;
+    var data = {
+        "message": message
+    }
+    io.on('connection', function (socket) {
+        console.log('We have user connected !');
+        socket.emit('getMessage', data);
+        res.send(data);
+    });
 })
 
+app.get('/userdetails',function(req,res,err){
+    var search = req.query.email;
+    res.send({
+        "payload":search
+    })
+})
 
-function sendNotification(title, options) {
-    var notification = new Notification(title, options);
-}
+app.get('/fetch',function(req,res){
+    var regexText = req.query.search;
+    userData.find({'email':new RegExp(regexText, "i")},function(err,result){
+        if(err){
+            console.log(err);
+        }else{
+            res.send({result:result})
+        }
+    })
+})
 
-function notifyMe(options) {
-      var title = 'Article Reader';
-    if (!("Notification" in window)) {
-        alert("This browser does not support desktop notification");
-    } else if (Notification.permission === "granted") {
-        sendNotification(title, options);
-    } else if (Notification.permission !== "denied") {
-        Notification.requestPermission(function (permission) {
-            if (permission === "granted") {
-                sendNotification(title, options);
-            }
-        });
+app.get('/join',function(req,res,err){
+    var fname = req.query.fname;
+    var lname = req.query.lname
+
+    var name = {
+        "fname":fname,
+        "lname":lname
     }
-
-}
+    res.send({
+        "full_name":name
+    })
+})
