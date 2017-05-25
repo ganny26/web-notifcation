@@ -6,26 +6,13 @@ var io = require('socket.io')(http);
 var router = express.Router();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var userDataSchema = require('./models/userSchema');
 
-const MONGO_DBNAME = "test";
-const MONGO_URL = "mongodb://localhost:27017/" + MONGO_DBNAME;
-
-mongoose.connect(MONGO_URL);
-
-
-var userDataSchema = new mongoose.Schema({
-    name:String,
-    email:String
-}, { collection: 'user_email' });
 
 var userData = mongoose.model('userData',userDataSchema);
 
-
-
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-
-app.use('/', router);
 
 http.listen(3000, function () {
     console.log("Listening on 3000");
@@ -77,6 +64,7 @@ app.get('/fetch',function(req,res){
         }
     })
 })
+
 app.get('/join',function(req,res,err){
     var fname = req.query.fname;
     var lname = req.query.lname
