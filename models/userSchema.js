@@ -1,14 +1,14 @@
 var mongoose = require('mongoose');
 
-const MONGO_URL = "mongodb://localhost:27017/user_email";
+const MONGO_DBNAME = "test";
+const MONGO_URL = "mongodb://localhost:27017/" + MONGO_DBNAME;
 
-var db = mongoose.connect(MONGO_URL);
+mongoose.connect(MONGO_URL);
 
-var userSchema = mongoose.Schema('user_email',{
+
+var userDataSchema = new mongoose.Schema({
     name:String,
     email:String
-});
+}, { collection: 'user_email' });
 
-var userDetails = db.model('user_email',userSchema);
-
-module.exports = userDetails;   
+module.exports = userDataSchema;   
