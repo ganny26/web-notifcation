@@ -7,14 +7,18 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
-const MONGO_URL = "mongodb://localhost:27017/user_email";
+const MONGO_DBNAME = "test";
+const MONGO_URL = "mongodb://localhost:27017/" + MONGO_DBNAME;
 
-var db = mongoose.connect(MONGO_URL);
+mongoose.connect(MONGO_URL);
 
-var userSchema = mongoose.model('user_email',{
+
+var userDataSchema = new mongoose.Schema({
     name:String,
     email:String
-});
+}, { collection: 'user_email' });
+
+var userData = mongoose.model('userData',userDataSchema);
 
 
 
@@ -38,7 +42,7 @@ io.on('connection', function (socket) {
 
     socket.on('search',function(text){
         const data = Math.random();
-        io.emit('found',text);
+        io.emit('found',data + '--' + text);
     })
 
 });
@@ -64,8 +68,8 @@ app.get('/userdetails',function(req,res,err){
 })
 
 app.get('/fetch',function(req,res){
-  
-    userSchema.find({'email':{$regex:/k/}},function(err,result){
+    var regexText = req.query.search;
+    userData.find({'email':new RegExp(regexText, "i")},function(err,result){
         if(err){
             console.log(err);
         }else{
