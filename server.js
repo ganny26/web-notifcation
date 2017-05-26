@@ -54,6 +54,9 @@ app.get('/userdetails',function(req,res,err){
     })
 })
 
+/**
+ * API to search
+ */
 app.get('/fetch',function(req,res){
     var regexText = req.query.search;
     userData.find({'email':new RegExp(regexText, "i")},function(err,result){
