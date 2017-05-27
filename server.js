@@ -18,6 +18,9 @@ http.listen(3000, function () {
     console.log("Listening on 3000");
 });
 
+/**
+ * Socket IO connection
+ */
 io.on('connection', function (socket) {
     console.log('We have user connected !');
 
