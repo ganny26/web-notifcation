@@ -50,6 +50,7 @@ app.post("/send", function (req, res) {
     });
 })
 
+/**User details*/
 app.get('/userdetails',function(req,res,err){
     var search = req.query.email;
     res.send({
